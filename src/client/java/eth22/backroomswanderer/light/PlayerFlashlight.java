@@ -11,14 +11,15 @@ public class PlayerFlashlight {
 
     public PlayerFlashlight() {
         areaLight.setColor(1.0f, 0.95f, 0.85f);
-        areaLight.setBrightness(2.5f);
+        areaLight.setBrightness(0.0f);
         areaLight.setSize(0.0f, 0.0f);
-        areaLight.setDistance(15.0f);
-        areaLight.setAngle(0.5f);
+        areaLight.setDistance(20.0f);
+        areaLight.setAngle(0.6f);
     }
 
     public void toggle() {
         enabled = !enabled;
+        areaLight.setBrightness(enabled ? 2.0f : 0.0f);
     }
 
     public boolean isEnabled() {

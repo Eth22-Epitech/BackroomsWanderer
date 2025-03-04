@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "backroomswanderer",
+	"version": "${version}",
+	"name": "BackroomsWanderer",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/backroomswanderer/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"eth22.backroomswanderer.BackroomsWanderer"
+		],
+		"client": [
+			"eth22.backroomswanderer.BackroomsWandererClient"
+		],
+		"fabric-datagen": [
+			"eth22.backroomswanderer.BackroomsWandererDataGenerator"
+		]
+	},
+	"mixins": [
+		"backroomswanderer.mixins.json",
+		{
+			"config": "backroomswanderer.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

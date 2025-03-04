@@ -26,8 +26,7 @@ public class LightManager {
         for (PlayerEntity player : client.world.getPlayers()) {
             if (player == null) continue;
 
-            Vec3d camPosVec = player.getLerpedPos(client.getRenderTime())
-                    .add(player.getRotationVec(client.getRenderTime()).multiply(0.3).add(0, 1.75, 0));
+            Vec3d camPosVec = player.getPos().add(player.getRotationVec(1.0f).multiply(0.3).add(0, 1.75, 0));
 
 //            boolean flashlightEnabled = FlashlightComponent.get(player).isFlashlightEnabled();
 

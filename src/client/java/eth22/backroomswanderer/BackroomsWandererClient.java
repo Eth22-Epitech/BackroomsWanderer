@@ -7,32 +7,39 @@ import foundry.veil.fabric.event.FabricVeilRenderLevelStageEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.MinecraftClient;
+
+import java.util.UUID;
 
 public class BackroomsWandererClient implements ClientModInitializer {
 
-@Override
-public void onInitializeClient() {
-	// Handle player disconnect
-	ClientPlayConnectionEvents.DISCONNECT.register(((clientPlayNetworkHandler, minecraftClient) -> {
-		minecraftClient.execute(() -> {
+	@Override
+	public void onInitializeClient() {
+		KeybindsManager.register();
+
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+			UUID playerUuid = MinecraftClient.getInstance().getSession().getUuidOrNull();
+			if (playerUuid == null) return;
+			LightManager.onPlayerDisconnected(playerUuid);
+		});
+
+		ClientPlayConnectionEvents.JOIN.register((handler, client, isFirstJoin) -> {
+			UUID playerUuid = MinecraftClient.getInstance().getSession().getUuidOrNull();
+			if (playerUuid != null) {
+				LightManager.onPlayerRejoined(playerUuid);
+			}
+		});
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			KeybindsManager.handleFlashlightToggle();
 			LightManager.removeInactiveFlashlights();
 		});
-	}));
 
-	// Register keybinds and flashlight handling
-	KeybindsManager.register();
-
-	// Listen for keybind presses
-	ClientTickEvents.END_CLIENT_TICK.register(client -> {
-		KeybindsManager.handleFlashlightToggle();
-	});
-
-	// Handle flashlight rendering
-	FabricVeilRenderLevelStageEvent.EVENT.register((stage, levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, renderTick, deltaTracker, camera, frustum) -> {
-		if (stage == VeilRenderLevelStageEvent.Stage.AFTER_LEVEL) {
-			LightManager.updateFlashlights();
-		}
-	});
+		FabricVeilRenderLevelStageEvent.EVENT.register((stage, levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, renderTick, deltaTracker, camera, frustum) -> {
+			if (stage == VeilRenderLevelStageEvent.Stage.AFTER_LEVEL) {
+				LightManager.updateFlashlights();
+			}
+		});
 	}
 }
 

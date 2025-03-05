@@ -4,5 +4,10 @@
 
   "itemGroup.backroomswanderer.blocks": "Backrooms Wanderer Blocks",
 
-  "block.backroomswanderer.level_0_wallpaper": "Level 0 Wallpaper"
+  "block.backroomswanderer.level_0_wallpaper": "Level 0 Wallpaper",
+  "block.backroomswanderer.level_0_torn_wallpaper": "Level 0 Torn Wallpaper",
+  "block.backroomswanderer.level_0_carpet_block": "Level 0 Carpet Block",
+  "block.backroomswanderer.level_0_carpet": "Level 0 Carpet",
+  "block.backroomswanderer.level_0_light": "Level 0 Light",
+  "block.backroomswanderer.level_0_tile": "Level 0 Tile"
 }

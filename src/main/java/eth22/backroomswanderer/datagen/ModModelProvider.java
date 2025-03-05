@@ -15,6 +15,10 @@ public class ModModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.LEVEL_0_WALLPAPER);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.LEVEL_0_TORN_WALLPAPER);
+        blockStateModelGenerator.registerWoolAndCarpet(ModBlocks.LEVEL_0_CARPET_BLOCK, ModBlocks.LEVEL_0_CARPET);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.LEVEL_0_LIGHT);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.LEVEL_0_TILE);
     }
 
     @Override

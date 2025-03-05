@@ -7,7 +7,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
-import eth22.backroomswanderer.components.FlashlightComponent;
 
 public class KeybindsManager {
     public static final KeyBinding toggleFlashlight = new KeyBinding(

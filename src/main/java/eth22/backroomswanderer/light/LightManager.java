@@ -2,7 +2,6 @@ package eth22.backroomswanderer.light;
 
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.light.AreaLight;
-import eth22.backroomswanderer.components.FlashlightComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
@@ -80,26 +79,20 @@ public class LightManager {
     }
 
     private static void cleanUpAllFlashlights() {
-        // Remove all lights from the VeilRenderSystem
         for (AreaLight light : flashlights.values()) {
             VeilRenderSystem.renderer().getLightRenderer().removeLight(light);
         }
 
-        // Clear the flashlight map
         flashlights.clear();
     }
 
-    // Cleanup inactive flashlights when a player disconnects
     public static void onPlayerDisconnected(UUID playerUuid) {
         cleanUpAllFlashlights();
     }
 
-    // Cleanup and update flashlights when a player rejoins
     public static void onPlayerRejoined(UUID playerUuid) {
-        // Clear all flashlight data for all players
         cleanUpAllFlashlights();
 
-        // Now update flashlights for all players (including the rejoined player)
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world == null) return;
 

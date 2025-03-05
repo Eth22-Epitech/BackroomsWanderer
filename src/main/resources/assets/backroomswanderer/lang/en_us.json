@@ -1,4 +1,8 @@
 {
   "key.backroomswanderer.toggle_flashlight": "Toggle Flashlight",
-  "category.backroomswanderer": "Backrooms Wanderer"
+  "category.backroomswanderer": "Backrooms Wanderer",
+
+  "itemGroup.backroomswanderer.blocks": "Backrooms Wanderer Blocks",
+
+  "blocks.backroomswanderer.level_0_wallpaper": "Level 0 Wallpaper"
 }

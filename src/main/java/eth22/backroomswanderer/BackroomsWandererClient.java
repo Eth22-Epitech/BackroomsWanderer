@@ -2,6 +2,7 @@ package eth22.backroomswanderer;
 
 import eth22.backroomswanderer.keybinds.KeybindsManager;
 import eth22.backroomswanderer.light.LightManager;
+import eth22.backroomswanderer.render.ShaderManager;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.fabric.event.FabricVeilRenderLevelStageEvent;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,6 +17,7 @@ public class BackroomsWandererClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		KeybindsManager.register();
+		ShaderManager.initialize();
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			UUID playerUuid = MinecraftClient.getInstance().getSession().getUuidOrNull();
@@ -33,6 +35,7 @@ public class BackroomsWandererClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			KeybindsManager.handleFlashlightToggle();
 			LightManager.removeInactiveFlashlights();
+			ShaderManager.updateVHSShader();
 		});
 
 		FabricVeilRenderLevelStageEvent.EVENT.register((stage, levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, renderTick, deltaTracker, camera, frustum) -> {

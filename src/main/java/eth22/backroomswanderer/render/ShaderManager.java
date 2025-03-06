@@ -7,20 +7,39 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
 public class ShaderManager {
-    private static final Identifier VHS_SHADER = Identifier.of("backroomswanderer", "shaders/post/vhs.json");
-    private static boolean vhsEnabled = false;
+    private static final Identifier VHS_SHADER = Identifier.of("backroomswanderer", "vhs");
+    private static boolean vhsEnabled = true;
+    private static boolean registered = false;
 
-    public static void initialize() {}
+    public static void initialize() {
+        // Optional: Log or do other setup here if needed
+    }
+
+    private static void ensureRegistered() {
+        if (registered) return;
+
+        boolean added = VeilRenderSystem.renderer().getPostProcessingManager().add(VHS_SHADER);
+        if (added) {
+            System.out.println("VHS pipeline registered.");
+            registered = true;
+        } else {
+            System.err.println("Failed to register VHS pipeline!");
+        }
+    }
+
+    public static void toggleVhs() {
+        vhsEnabled = !vhsEnabled;
+    }
 
     public static void updateVHSShader() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        float time = (float) client.getRenderTime(); // This is your "elapsed game time" in ticks
+        ensureRegistered();
 
         PostProcessingManager manager = VeilRenderSystem.renderer().getPostProcessingManager();
         PostPipeline vhsPipeline = manager.getPipeline(VHS_SHADER);
 
         if (vhsPipeline != null) {
-            vhsPipeline.setFloat("time", time);
+            vhsPipeline.setFloat("time", (float) MinecraftClient.getInstance().getRenderTime());
+            manager.runPipeline(vhsPipeline);
         }
     }
 }

@@ -1,0 +1,11 @@
+{
+  "stages": [
+    {
+      "type": "veil:blit",
+      "shader": "backroomswanderer:vhs",
+      "in": "minecraft:main",
+      "out": "veil:post"
+    }
+  ],
+  "priority": 1000
+}

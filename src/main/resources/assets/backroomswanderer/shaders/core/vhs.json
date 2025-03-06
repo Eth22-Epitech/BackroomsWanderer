@@ -1,8 +1,0 @@
-{
-  "name": "vhs",
-  "program": "vhs",
-  "type": "fragment",
-  "uniforms": [
-    { "name": "time", "type": "float" }
-  ]
-}

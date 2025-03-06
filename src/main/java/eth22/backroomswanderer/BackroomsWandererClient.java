@@ -35,12 +35,12 @@ public class BackroomsWandererClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			KeybindsManager.handleFlashlightToggle();
 			LightManager.removeInactiveFlashlights();
-			ShaderManager.updateVHSShader();
 		});
 
 		FabricVeilRenderLevelStageEvent.EVENT.register((stage, levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, renderTick, deltaTracker, camera, frustum) -> {
 			if (stage == VeilRenderLevelStageEvent.Stage.AFTER_LEVEL) {
 				LightManager.updateFlashlights();
+				ShaderManager.updateVHSShader();
 			}
 		});
 	}

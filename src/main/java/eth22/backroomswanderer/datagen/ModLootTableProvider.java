@@ -15,5 +15,10 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         addDrop(ModBlocks.LEVEL_0_WALLPAPER);
+        addDrop(ModBlocks.LEVEL_0_TORN_WALLPAPER);
+        addDrop(ModBlocks.LEVEL_0_CARPET_BLOCK);
+        addDrop(ModBlocks.LEVEL_0_CARPET);
+        addDrop(ModBlocks.LEVEL_0_LIGHT);
+        addDrop(ModBlocks.LEVEL_0_TILE);
     }
 }

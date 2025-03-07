@@ -4,6 +4,7 @@ import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
 
 public class ShaderManager {
@@ -42,7 +43,14 @@ public class ShaderManager {
         PostPipeline vhsPipeline = manager.getPipeline(VHS_SHADER);
 
         if (vhsPipeline != null) {
-            vhsPipeline.setFloat("time", (float) client.getRenderTime());
+            RenderTickCounter tickCounter = client.getRenderTickCounter();
+
+            float deltaTime = tickCounter.getTickDelta(true);
+
+            assert client.world != null;
+            float accumulatedTime = client.world.getTime() * deltaTime;
+
+            vhsPipeline.setFloat("time", accumulatedTime);
             vhsPipeline.setFloat("resolutionX", (float) width);
             vhsPipeline.setFloat("resolutionY", (float) height);
 

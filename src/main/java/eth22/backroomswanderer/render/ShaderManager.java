@@ -30,9 +30,19 @@ public class ShaderManager {
 
     public static void toggleVhs() {
         vhsEnabled = !vhsEnabled;
+
+        if (!vhsEnabled) {
+            PostProcessingManager manager = VeilRenderSystem.renderer().getPostProcessingManager();
+            manager.remove(VHS_SHADER);
+            System.out.println("VHS pipeline removed.");
+        } else {
+            ensureRegistered();
+        }
     }
 
     public static void updateVHSShader() {
+        if (!vhsEnabled) return;
+
         ensureRegistered();
 
         MinecraftClient client = MinecraftClient.getInstance();
@@ -57,5 +67,4 @@ public class ShaderManager {
             manager.runPipeline(vhsPipeline);
         }
     }
-
 }

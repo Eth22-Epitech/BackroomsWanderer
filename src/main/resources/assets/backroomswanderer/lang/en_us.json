@@ -1,6 +1,8 @@
 {
-  "key.backroomswanderer.toggle_flashlight": "Toggle Flashlight",
   "category.backroomswanderer": "Backrooms Wanderer",
+
+  "key.backroomswanderer.toggle_flashlight": "Toggle Flashlight",
+  "key.backroomswanderer.toggle_vhs_shader": "Toggle VHS Shader",
 
   "itemGroup.backroomswanderer.blocks": "Backrooms Wanderer Blocks",
 

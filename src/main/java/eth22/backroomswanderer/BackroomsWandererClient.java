@@ -34,6 +34,7 @@ public class BackroomsWandererClient implements ClientModInitializer {
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			KeybindsManager.handleFlashlightToggle();
+			KeybindsManager.handleVhsShaderToggle();
 			LightManager.removeInactiveFlashlights();
 		});
 

@@ -28,8 +28,7 @@ public class KeybindsManager {
         if (isFlashlightTogglePressed()) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-//                FlashlightComponent component = FlashlightComponent.get(player);
-//                component.toggleFlashlight();
+                LightManager.toggleDebugEnabled();
                 LightManager.updateFlashlights();
             }
         }

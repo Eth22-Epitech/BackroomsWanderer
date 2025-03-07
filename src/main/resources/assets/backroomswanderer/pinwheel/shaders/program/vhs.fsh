@@ -121,7 +121,7 @@ vec4 BlendSoftLight(vec4 base, vec4 blend, float opacity)
 vec4 applyChromaticAberration(sampler2D tex, vec2 uv, vec4 baseColor) {
     vec2 center = vec2(0.5);
     float dist = distance(uv, center);
-    float offset = 0.008 * dist;
+    float offset = 0.006 * dist;
 
     vec4 shiftedColor;
     shiftedColor.r = texture(tex, uv + vec2(offset, 0.0)).r;

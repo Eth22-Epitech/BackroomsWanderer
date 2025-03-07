@@ -17,6 +17,11 @@ public class LightManager {
     private static final float BRIGHTNESS = 2.0f;
     private static final float DISTANCE = 20.0f;
     private static final float ANGLE = 0.6f;
+    private static boolean debugEnabled = true;
+
+    public static void toggleDebugEnabled() {
+        debugEnabled = !debugEnabled;
+    }
 
     public static void updateFlashlights() {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -27,9 +32,7 @@ public class LightManager {
 
                 Vec3d camPosVec = player.getPos().add(player.getRotationVec(1.0f).multiply(0.3).add(0, 1.75, 0));
 
-//            boolean flashlightEnabled = FlashlightComponent.get(player).isFlashlightEnabled();
-
-                if (true) {
+                if (debugEnabled) {
                     AreaLight flashLight = flashlights.computeIfAbsent(player.getUuid(), uuid -> {
                         AreaLight newLight = new AreaLight();
                         newLight.setBrightness(BRIGHTNESS);
@@ -54,6 +57,7 @@ public class LightManager {
                     currentOrientation.slerp(goal, 0.15f);
                     flashLight.setOrientation(currentOrientation);
                 } else {
+                    cleanUpAllFlashlights();
                     flashlights.remove(player.getUuid());
                 }
             }

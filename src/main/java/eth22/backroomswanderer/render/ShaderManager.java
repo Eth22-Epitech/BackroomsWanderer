@@ -34,12 +34,20 @@ public class ShaderManager {
     public static void updateVHSShader() {
         ensureRegistered();
 
+        MinecraftClient client = MinecraftClient.getInstance();
+        int width = client.getWindow().getFramebufferWidth();
+        int height = client.getWindow().getFramebufferHeight();
+
         PostProcessingManager manager = VeilRenderSystem.renderer().getPostProcessingManager();
         PostPipeline vhsPipeline = manager.getPipeline(VHS_SHADER);
 
         if (vhsPipeline != null) {
-            vhsPipeline.setFloat("time", (float) MinecraftClient.getInstance().getRenderTime());
+            vhsPipeline.setFloat("time", (float) client.getRenderTime());
+            vhsPipeline.setFloat("resolutionX", (float) width);
+            vhsPipeline.setFloat("resolutionY", (float) height);
+
             manager.runPipeline(vhsPipeline);
         }
     }
+
 }

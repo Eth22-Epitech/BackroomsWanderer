@@ -18,6 +18,7 @@ public class ModItemGroups {
             .icon(() -> new ItemStack(ModBlocks.LEVEL_0_WALLPAPER))
             .entries(((displayContext, entries) -> {
                 entries.add(ModBlocks.LEVEL_0_WALLPAPER);
+                entries.add(ModBlocks.LEVEL_0_WALLPAPER_BOTTOM);
                 entries.add(ModBlocks.LEVEL_0_TORN_WALLPAPER);
                 entries.add(ModBlocks.LEVEL_0_CARPET_BLOCK);
                 entries.add(ModBlocks.LEVEL_0_CARPET);

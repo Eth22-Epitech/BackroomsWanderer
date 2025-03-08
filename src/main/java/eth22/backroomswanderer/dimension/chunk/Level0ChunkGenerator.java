@@ -20,6 +20,7 @@ import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.noise.NoiseConfig;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 public class Level0ChunkGenerator extends ChunkGenerator {
@@ -68,6 +69,32 @@ public class Level0ChunkGenerator extends ChunkGenerator {
     @Override
     public void buildSurface(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
+        Random random = new Random(chunkPos.toLong());
+
+        Level0ChunkData chunkData = Level0ChunkData.fromChunk(chunk);
+
+        // Check neighboring chunks
+        boolean neighborWithoutLights = false;
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        for (int[] direction : directions) {
+            int dx = direction[0];
+            int dz = direction[1];
+
+            ChunkPos neighborPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+            Chunk neighborChunk = region.getChunk(neighborPos.x, neighborPos.z);
+            if (neighborChunk != null) {
+                Level0ChunkData neighborData = Level0ChunkData.fromChunk(neighborChunk);
+                if (!neighborData.hasLights()) {
+                    neighborWithoutLights = true;
+                    break;
+                }
+            }
+        }
+
+        // Determine if lights should be generated
+        boolean generateLights = random.nextInt(100) < (neighborWithoutLights ? 30 : 99);
+        chunkData.setHasLights(generateLights);
+        chunkData.toChunk(chunk);
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
@@ -81,24 +108,20 @@ public class Level0ChunkGenerator extends ChunkGenerator {
                 chunk.setBlockState(new BlockPos(worldX, 5, worldZ), ModBlocks.LEVEL_0_TILE.getDefaultState(), false);
 
                 // Set the lights block
-                if ((x == 4 || x == 11) && (z == 4 || z == 11)) {
+                if (generateLights && ((x == 5 || x == 11) && (z == 5 || z == 11))) {
                     chunk.setBlockState(new BlockPos(worldX, 5, worldZ), ModBlocks.LEVEL_0_LIGHT.getDefaultState(), false);
                 }
 
                 // Set the wall blocks on the north and west edges, with a centered 4x3 hole
-                if (x == 0 && (z < 6 || z > 9)) {
+                if ((x == 0 && (z < 7 || z > 9)) || (z == 0 && (x < 7 || x > 9))) {
                     for (int y = 1; y <= 4; y++) {
-                        chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                        if (y == 1) {
+                            chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER_BOTTOM.getDefaultState(), false);
+                        } else {
+                            chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                        }
                     }
-                } else if (x == 0) {
-                        chunk.setBlockState(new BlockPos(worldX, 4, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
-                }
-
-                if (z == 0 && (x < 6 || x > 9)) {
-                    for (int y = 1; y <= 4; y++) {
-                        chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
-                    }
-                } else if (z == 0) {
+                } else if (x == 0 || z == 0) {
                     chunk.setBlockState(new BlockPos(worldX, 4, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
                 }
             }

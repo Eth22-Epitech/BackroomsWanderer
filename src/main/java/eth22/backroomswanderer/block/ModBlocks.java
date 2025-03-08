@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 public class ModBlocks {
 
     public static final Block LEVEL_0_WALLPAPER = registerBlock("level_0_wallpaper", new Block(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)));
+    public static final Block LEVEL_0_WALLPAPER_BOTTOM = registerBlock("level_0_wallpaper_bottom", new Block(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)));
     public static final Block LEVEL_0_TORN_WALLPAPER = registerBlock("level_0_torn_wallpaper", new Block(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)));
     public static final Block LEVEL_0_CARPET_BLOCK = registerBlock("level_0_carpet_block", new Block(AbstractBlock.Settings.copy(Blocks.WHITE_WOOL)));
     public static final Block LEVEL_0_CARPET = registerBlock("level_0_carpet", new Block(AbstractBlock.Settings.copy(Blocks.WHITE_CARPET)));

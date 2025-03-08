@@ -1,6 +1,8 @@
 package eth22.backroomswanderer;
 
 import eth22.backroomswanderer.block.ModBlocks;
+import eth22.backroomswanderer.dimension.ModChunkGenerators;
+import eth22.backroomswanderer.dimension.ModDimensions;
 import eth22.backroomswanderer.item.ModItemGroups;
 import net.fabricmc.api.ModInitializer;
 
@@ -15,5 +17,7 @@ public class BackroomsWanderer implements ModInitializer {
 	public void onInitialize() {
 		ModBlocks.registerModBlocks();
 		ModItemGroups.registerItemGroups();
+		ModChunkGenerators.registerChunkGenerators();
+		ModDimensions.registerDimension();
 	}
 }

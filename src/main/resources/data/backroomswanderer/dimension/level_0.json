@@ -1,0 +1,12 @@
+{
+  "type": "backroomswanderer:level_0",
+  "generator": {
+    "type": "backroomswanderer:level_0",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:plains"
+    },
+    "sea_level": 64,
+    "world_height": 384
+  }
+}

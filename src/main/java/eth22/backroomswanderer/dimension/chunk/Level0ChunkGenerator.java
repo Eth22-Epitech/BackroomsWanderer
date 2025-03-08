@@ -74,7 +74,33 @@ public class Level0ChunkGenerator extends ChunkGenerator {
                 int worldX = chunkPos.getStartX() + x;
                 int worldZ = chunkPos.getStartZ() + z;
 
+                // Set the floor block
                 chunk.setBlockState(new BlockPos(worldX, 0, worldZ), ModBlocks.LEVEL_0_CARPET_BLOCK.getDefaultState(), false);
+
+                // Set the ceiling block
+                chunk.setBlockState(new BlockPos(worldX, 5, worldZ), ModBlocks.LEVEL_0_TILE.getDefaultState(), false);
+
+                // Set the lights block
+                if ((x == 4 || x == 11) && (z == 4 || z == 11)) {
+                    chunk.setBlockState(new BlockPos(worldX, 5, worldZ), ModBlocks.LEVEL_0_LIGHT.getDefaultState(), false);
+                }
+
+                // Set the wall blocks on the north and west edges, with a centered 4x3 hole
+                if (x == 0 && (z < 6 || z > 9)) {
+                    for (int y = 1; y <= 4; y++) {
+                        chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                    }
+                } else if (x == 0) {
+                        chunk.setBlockState(new BlockPos(worldX, 4, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                }
+
+                if (z == 0 && (x < 6 || x > 9)) {
+                    for (int y = 1; y <= 4; y++) {
+                        chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                    }
+                } else if (z == 0) {
+                    chunk.setBlockState(new BlockPos(worldX, 4, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                }
             }
         }
     }

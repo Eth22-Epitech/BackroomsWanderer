@@ -66,8 +66,185 @@ public class Level0ChunkGenerator extends ChunkGenerator {
         // No carving
     }
 
-    @Override
-    public void buildSurface(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {
+    private void generateFloor(Chunk chunk, ChunkPos chunkPos, int yOffset) {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int worldX = chunkPos.getStartX() + x;
+                int worldZ = chunkPos.getStartZ() + z;
+                chunk.setBlockState(new BlockPos(worldX, yOffset, worldZ), ModBlocks.LEVEL_0_CARPET_BLOCK.getDefaultState(), false);
+            }
+        }
+    }
+
+    private void generateCeiling(Chunk chunk, ChunkPos chunkPos, boolean generateLights, int yOffset) {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int worldX = chunkPos.getStartX() + x;
+                int worldZ = chunkPos.getStartZ() + z;
+                chunk.setBlockState(new BlockPos(worldX, 5 + yOffset, worldZ), ModBlocks.LEVEL_0_TILE.getDefaultState(), false);
+
+                // Set the lights block
+                if (generateLights && ((x == 5 || x == 11) && (z == 5 || z == 11))) {
+                    chunk.setBlockState(new BlockPos(worldX, 5 + yOffset, worldZ), ModBlocks.LEVEL_0_LIGHT.getDefaultState(), false);
+                }
+                if (generateLights && ((x == 0 || x == 8) && (z == 0 || z == 8))) {
+                    chunk.setBlockState(new BlockPos(worldX, 5 + yOffset, worldZ), ModBlocks.LEVEL_0_LIGHT.getDefaultState(), false);
+                }
+            }
+        }
+    }
+
+    private void generateWallsWithHoles(Chunk chunk, ChunkPos chunkPos, boolean generateWalls, int yOffset) {
+        Random random = new Random(chunkPos.toLong());
+
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int worldX = chunkPos.getStartX() + x;
+                int worldZ = chunkPos.getStartZ() + z;
+
+                // Generate the north wall if generateWalls is true
+                if (generateWalls && x == 0) {
+                    for (int y = 1; y <= 4; y++) {
+                        if (y == 1) {
+                            chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER_BOTTOM.getDefaultState(), false);
+                        } else {
+                            chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                        }
+                    }
+                }
+
+                // Generate the west wall if generateWalls is true
+                if (generateWalls && z == 0) {
+                    for (int y = 1; y <= 4; y++) {
+                        if (y == 1) {
+                            chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER_BOTTOM.getDefaultState(), false);
+                        } else {
+                            chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (generateWalls) {
+            // Randomize the north hole
+            int northHoleLength = random.nextInt(5) + 2;
+            int northHoleStart = random.nextInt(16 - northHoleLength);
+            for (int z = northHoleStart; z < northHoleStart + northHoleLength; z++) {
+                for (int y = 1; y <= 4; y++) {
+                    chunk.setBlockState(new BlockPos(chunkPos.getStartX(), y + yOffset, chunkPos.getStartZ() + z), Blocks.AIR.getDefaultState(), false);
+                }
+            }
+
+            // Randomize the west hole
+            int westHoleLength = random.nextInt(5) + 2;
+            int westHoleStart = random.nextInt(16 - westHoleLength);
+            for (int x = westHoleStart; x < westHoleStart + westHoleLength; x++) {
+                for (int y = 1; y <= 4; y++) {
+                    chunk.setBlockState(new BlockPos(chunkPos.getStartX() + x, y + yOffset, chunkPos.getStartZ()), Blocks.AIR.getDefaultState(), false);
+                }
+            }
+        }
+    }
+
+    private void generateRandomWall(Chunk chunk, ChunkPos chunkPos, boolean generateWalls, int yOffset) {
+        if (generateWalls) {
+            return;
+        }
+
+        Random random = new Random(chunkPos.toLong());
+        boolean isXAxis = random.nextBoolean();
+        int startX = random.nextInt(12) + 2; // Ensure start is not on x == 0 or 1
+        int startZ = random.nextInt(12) + 2; // Ensure start is not on z == 0 or 1
+        int length = random.nextInt(16 - (isXAxis ? startX : startZ)) + 1;
+
+        // 60% chance to extend the wall until the edge of the chunk
+        if (random.nextInt(100) < 60) {
+            length = 16 - (isXAxis ? startX : startZ);
+        }
+
+        // Generate the random wall
+        for (int i = 0; i < length; i++) {
+            int worldX = chunkPos.getStartX() + (isXAxis ? startX + i : startX);
+            int worldZ = chunkPos.getStartZ() + (isXAxis ? startZ : startZ + i);
+
+            for (int y = 1; y <= 4; y++) {
+                if (y == 1) {
+                    chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER_BOTTOM.getDefaultState(), false);
+                } else {
+                    chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                }
+            }
+        }
+    }
+
+    private void extendWall(Chunk chunk, ChunkPos chunkPos, ChunkRegion region, boolean generateWalls, int yOffset) {
+        if (generateWalls) {
+            return;
+        }
+
+        Random random = new Random(chunkPos.toLong());
+
+        // Check for walls in all adjacent chunks and extend if necessary
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        for (int[] direction : directions) {
+            int dx = direction[0];
+            int dz = direction[1];
+
+            ChunkPos neighborPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+            Chunk neighborChunk = region.getChunk(neighborPos.x, neighborPos.z);
+            BlockPos wallPos = neighborChunk != null ? hasWallAtEdge(neighborChunk, dx, dz, yOffset) : null;
+            if (wallPos != null) {
+                int length = random.nextInt(100) < 50 ? 16 : random.nextInt(16) + 1;
+                boolean hasHole = length == 16 && random.nextInt(100) < 40;
+                int holeStart = 0;
+                int holeWidth = 0;
+
+                if (hasHole) {
+                    holeWidth = random.nextInt(6) + 1;
+                    holeStart = random.nextInt(16 - holeWidth);
+                }
+
+                for (int i = 0; i < length; i++) {
+                    int worldX = chunkPos.getStartX() + (dx == 1 ? 15 - i : (dx == -1 ? i : wallPos.getX() - chunkPos.getStartX()));
+                    int worldZ = chunkPos.getStartZ() + (dz == 1 ? 15 - i : (dz == -1 ? i : wallPos.getZ() - chunkPos.getStartZ()));
+
+                    for (int y = 1; y <= 4; y++) {
+                        if (hasHole && i >= holeStart && i < holeStart + holeWidth) {
+                            chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), Blocks.AIR.getDefaultState(), false);
+                        } else {
+                            if (y == 1) {
+                                chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER_BOTTOM.getDefaultState(), false);
+                            } else {
+                                chunk.setBlockState(new BlockPos(worldX, y + yOffset, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private BlockPos hasWallAtEdge(Chunk chunk, int dx, int dz, int yOffset) {
+        int edgeX = dx == -1 ? 15 : (dx == 1 ? 0 : -1);
+        int edgeZ = dz == -1 ? 15 : (dz == 1 ? 0 : -1);
+
+        for (int y = 1; y <= 4; y++) {
+            for (int i = 0; i < 16; i++) {
+                int x = dx == 0 ? i : edgeX;
+                int z = dz == 0 ? i : edgeZ;
+                if (x == -1 || z == -1) continue;
+
+                BlockPos pos = new BlockPos(chunk.getPos().getStartX() + x, y + yOffset, chunk.getPos().getStartZ() + z);
+                if (chunk.getBlockState(pos).isOf(ModBlocks.LEVEL_0_WALLPAPER) || chunk.getBlockState(pos).isOf(ModBlocks.LEVEL_0_WALLPAPER_BOTTOM)) {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void generateBiomeLiminalHalls(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
         Random random = new Random(chunkPos.toLong());
 
@@ -91,41 +268,30 @@ public class Level0ChunkGenerator extends ChunkGenerator {
             }
         }
 
-        // Determine if lights should be generated
-        boolean generateLights = random.nextInt(100) < (neighborWithoutLights ? 30 : 99);
+        // === Random Elements ===
+        boolean generateLights = random.nextInt(100) < (neighborWithoutLights ? 35 : 98);
         chunkData.setHasLights(generateLights);
         chunkData.toChunk(chunk);
 
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                int worldX = chunkPos.getStartX() + x;
-                int worldZ = chunkPos.getStartZ() + z;
+        boolean generateWalls = random.nextInt(100) < 50;
 
-                // Set the floor block
-                chunk.setBlockState(new BlockPos(worldX, 0, worldZ), ModBlocks.LEVEL_0_CARPET_BLOCK.getDefaultState(), false);
+        // Generate the floor
+        generateFloor(chunk, chunkPos, 0);
 
-                // Set the ceiling block
-                chunk.setBlockState(new BlockPos(worldX, 5, worldZ), ModBlocks.LEVEL_0_TILE.getDefaultState(), false);
+        // Generate the ceiling
+        generateCeiling(chunk, chunkPos, generateLights, 0);
 
-                // Set the lights block
-                if (generateLights && ((x == 5 || x == 11) && (z == 5 || z == 11))) {
-                    chunk.setBlockState(new BlockPos(worldX, 5, worldZ), ModBlocks.LEVEL_0_LIGHT.getDefaultState(), false);
-                }
+        // Generate the walls
+        generateWallsWithHoles(chunk, chunkPos, generateWalls, 0);
+        generateRandomWall(chunk, chunkPos, generateWalls, 0);
+        extendWall(chunk, chunkPos, region, generateWalls, 0);
+        extendWall(chunk, chunkPos, region, generateWalls, 0);
+    }
 
-                // Set the wall blocks on the north and west edges, with a centered 4x3 hole
-                if ((x == 0 && (z < 7 || z > 9)) || (z == 0 && (x < 7 || x > 9))) {
-                    for (int y = 1; y <= 4; y++) {
-                        if (y == 1) {
-                            chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER_BOTTOM.getDefaultState(), false);
-                        } else {
-                            chunk.setBlockState(new BlockPos(worldX, y, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
-                        }
-                    }
-                } else if (x == 0 || z == 0) {
-                    chunk.setBlockState(new BlockPos(worldX, 4, worldZ), ModBlocks.LEVEL_0_WALLPAPER.getDefaultState(), false);
-                }
-            }
-        }
+    @Override
+    public void buildSurface(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {
+        // Liminal Halls Biome
+        generateBiomeLiminalHalls(region, structures, noiseConfig, chunk);
     }
 
     @Override

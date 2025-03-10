@@ -18,7 +18,6 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.LEVEL_0_WALLPAPER_BOTTOM);
         addDrop(ModBlocks.LEVEL_0_TORN_WALLPAPER);
         addDrop(ModBlocks.LEVEL_0_CARPET_BLOCK);
-        addDrop(ModBlocks.LEVEL_0_CARPET);
         addDrop(ModBlocks.LEVEL_0_LIGHT);
         addDrop(ModBlocks.LEVEL_0_TILE);
     }

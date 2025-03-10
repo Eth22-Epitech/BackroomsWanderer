@@ -21,7 +21,6 @@ public class ModItemGroups {
                 entries.add(ModBlocks.LEVEL_0_WALLPAPER_BOTTOM);
                 entries.add(ModBlocks.LEVEL_0_TORN_WALLPAPER);
                 entries.add(ModBlocks.LEVEL_0_CARPET_BLOCK);
-                entries.add(ModBlocks.LEVEL_0_CARPET);
                 entries.add(ModBlocks.LEVEL_0_LIGHT);
                 entries.add(ModBlocks.LEVEL_0_TILE);
             }))
